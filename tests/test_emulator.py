@@ -1,6 +1,6 @@
 import unittest
-from core.vfs import VirtualFileSystem
-from core.interpreter import CommandInterpreter
+from src.core.vfs import VirtualFileSystem
+from src.core.interpreter import CommandInterpreter
 
 
 class TestUnixEmulator(unittest.TestCase):

@@ -1,9 +1,9 @@
 import sys
 from PySide6.QtWidgets import QApplication
-from core.config_manager import ConfigManager
-from core.interpreter import CommandInterpreter
-from core.vfs import VirtualFileSystem
-from ui.main_window import TerminalWindow
+from src.core.config_manager import ConfigManager
+from src.core.interpreter import CommandInterpreter
+from src.core.vfs import VirtualFileSystem
+from src.ui.main_window import TerminalWindow
 
 
 def main():
