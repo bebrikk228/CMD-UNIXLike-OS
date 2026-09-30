@@ -2,22 +2,27 @@ import sys
 from PySide6.QtWidgets import QApplication
 from core.config_manager import ConfigManager
 from core.interpreter import CommandInterpreter
+from core.vfs import VirtualFileSystem
 from ui.main_window import TerminalWindow
 
 
 def main():
-    """Точка входа в приложение эмулятора."""
-    # 1. Считываем конфигурацию и приоритеты по ТЗ
+    """Точка входа в приложение эмулятора UNIX."""
     cfg = ConfigManager()
     cfg.initialize()
 
-    app = QApplication(sys.argv)
+    # Инициализируем VFS и загружаем CSV в память по ТЗ
+    vfs = VirtualFileSystem()
+    vfs_log = vfs.load_from_csv(cfg.vfs_path)
 
-    interpreter = CommandInterpreter()
+    interpreter = CommandInterpreter(vfs)
+
+    app = QApplication(sys.argv)
     window = TerminalWindow(interpreter)
     window.show()
 
-    # 2. Передаем управление скрипту после отрисовки окна
+    # Отображаем статус ФС в ретро-окне
+    window.output_area.append(f"VFS Status: {vfs_log}\n")
     window.run_startup_script(cfg)
 
     sys.exit(app.exec())

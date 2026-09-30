@@ -1,0 +1,8 @@
+path,type,content
+/,dir,
+/home,dir,
+/home/user,dir,
+/home/user/docs,dir,
+/home/user/readme.txt,file,SGVsbG8gZnJvbSBWRlMh
+/etc,dir,
+/etc/config.cfg,file,bXlfY29uZmlnX2RhdGE=
