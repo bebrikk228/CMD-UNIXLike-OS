@@ -1,5 +1,8 @@
 @echo off
 chcp 65001 > nul
+
+cd /d "%~dp0"
+
 echo === [1/3] Проверка и установка зависимостей (PySide6) ===
 python -c "import PySide6" 2>nul
 if %errorlevel% neq 0 (
@@ -8,8 +11,8 @@ if %errorlevel% neq 0 (
 )
 
 echo === [2/3] Автоматический запуск модульных тестов ===
-set PYTHONPATH=src
-python -m unittest discover tests
+set PYTHONPATH=src;.
+python -m unittest discover -s tests -p "test_*.py"
 
 if %errorlevel% equ 0 (
     echo Тесты пройдены успешно! Запуск эмулятора...
