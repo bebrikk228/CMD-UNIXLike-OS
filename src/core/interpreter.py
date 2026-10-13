@@ -3,7 +3,7 @@ import shlex
 
 
 class CommandInterpreter:
-    """Парсер и исполнитель базовых команд UNIX для VFS."""
+    """Парсер и исполнитель команд UNIX для VFS."""
 
     def __init__(self, vfs):
         """Инициализация интерпретатора с подключенной VFS."""
@@ -53,6 +53,10 @@ class CommandInterpreter:
             return self.vfs.get_pwd(), False, False
         if cmd_name == "echo":
             return " ".join(remaining), False, False
+        if cmd_name == "mv":
+            return self._cmd_mv(args), False, False
+        if cmd_name == "chown":
+            return self._cmd_chown(args), False, False
 
         return f"bash: {cmd_name}: command not found", False, False
 
@@ -146,3 +150,46 @@ class CommandInterpreter:
 
         self.vfs.current_node = target_node
         return ""
+
+    def _cmd_mv(self, args: list[str]) -> str:
+        """Перемещение/переименование узлов VFS."""
+        if len(args) < 2:
+            return "mv: missing file operand"
+
+        src_path, dest_path = args[0], args[1]
+        src_node = self.vfs.resolve_path(src_path)
+
+        if not src_node:
+            return f"mv: cannot stat '{src_path}': No such file or directory"
+        if src_node == self.vfs.root:
+            return "mv: cannot move root directory"
+
+        dest_node = self.vfs.resolve_path(dest_path)
+
+        if src_node.parent:
+            src_node.parent.children.pop(src_node.name, None)
+
+        if dest_node and dest_node.is_dir:
+            dest_node.children[src_node.name] = src_node
+            src_node.parent = dest_node
+        else:
+            src_node.name = dest_path
+            self.vfs.current_node.children[dest_path] = src_node
+            src_node.parent = self.vfs.current_node
+
+        return f"Moved/Renamed '{src_path}' -> '{dest_path}'"
+
+    def _cmd_chown(self, args: list[str]) -> str:
+        """Смена владельца файла/папки VFS."""
+        if len(args) < 2:
+            return "chown: missing operand"
+
+        new_owner, target_path = args[0], args[1]
+        target_node = self.vfs.resolve_path(target_path)
+
+        if not target_node:
+            return f"chown: cannot access '{target_path}': No such file"
+
+        old_owner = target_node.owner
+        target_node.owner = new_owner
+        return f"Changed owner of '{target_path}': {old_owner} -> {new_owner}"
