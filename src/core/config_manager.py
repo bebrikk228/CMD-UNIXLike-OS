@@ -33,7 +33,6 @@ class ConfigManager:
 
             if "Setting" in config:
                 sec = config["Setting"]
-                # По ТЗ: значения из файла имеют приоритет над аргументами CLI
                 self.vfs_path = sec.get("vfs_path", self.vfs_path)
                 self.script_path = sec.get("script_path", self.script_path)
             return True
@@ -45,11 +44,9 @@ class ConfigManager:
         """Сборка параметров согласно логике приоритетов ТЗ."""
         args = self.parse_args()
 
-        # 1. Задаем базовые значения из командной строки
         self.vfs_path = args.vfs
         self.script_path = args.script
 
-        # 2. Если передан файл конфигурации, его значения переписывают аргументы
         if args.config:
             self.load_ini(args.config)
 
