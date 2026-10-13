@@ -2,20 +2,20 @@ import os
 
 
 class CommandInterpreter:
-    """Минимальный интерпретатор REPL для Этапа 1."""
+    """Интерпретатор-заглушка для Этапа 2."""
 
     def __init__(self):
-        """Инициализация интерпретатора."""
+        """Инициализация без VFS."""
         pass
 
     def expand_env_vars(self, text: str) -> str:
-        """Раскрытие переменных окружения ОС ($HOME и др.)."""
+        """Раскрытие переменных окружения ОС."""
         return os.path.expandvars(text)
 
     def execute(self, command_line: str) -> tuple[str, bool, bool]:
-        """Обработка команд-заглушек и команды exit."""
+        """Обработка команд-заглушек."""
         clean_line = self.expand_env_vars(command_line.strip())
-        if not clean_line:
+        if not clean_line or clean_line.startswith("#"):
             return "", False, False
 
         parts = clean_line.split()
