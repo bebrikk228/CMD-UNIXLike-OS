@@ -1,28 +1,34 @@
 import unittest
 from core.interpreter import CommandInterpreter
+from core.vfs import VirtualFileSystem
 
 
 class TestUnixEmulator(unittest.TestCase):
-    """Тестирование команд-заглушек и парсера для Этапа 2."""
+    """Тестирование VFS и базовых команд для Этапа 3."""
 
     def setUp(self):
-        """Инициализация интерпретатора."""
-        self.interpreter = CommandInterpreter()
+        """Инициализация изолированной ФС перед каждым тестом."""
+        self.vfs = VirtualFileSystem()
+        self.vfs._add_path("/home/user", "dir", "")
+        self.vfs._add_path("/home/user/readme.txt", "file", "SGVsbG8=", 15)
+        self.interpreter = CommandInterpreter(self.vfs)
 
-    def test_ls_stub(self):
-        """Тест заглушки ls."""
-        res, _, _ = self.interpreter.execute("ls -la /home")
-        self.assertEqual(res, "ls -la /home")
+    def test_cd_command(self):
+        """Тест перемещения по папкам cd."""
+        self.interpreter.execute("cd home/user")
+        self.assertEqual(self.vfs.current_node.name, "user")
 
-    def test_cd_stub(self):
-        """Тест заглушки cd."""
-        res, _, _ = self.interpreter.execute("cd /var/log")
-        self.assertEqual(res, "cd /var/log")
+    def test_ls_command(self):
+        """Тест вывода содержимого каталога ls."""
+        self.interpreter.execute("cd home")
+        res, _, _ = self.interpreter.execute("ls")
+        self.assertEqual(res, "user")
 
-    def test_exit(self):
-        """Тест команды exit."""
-        res, should_exit, _ = self.interpreter.execute("exit")
-        self.assertTrue(should_exit)
+    def test_vfs_recursive_size(self):
+        """Тест рекурсивного подсчета веса каталогов."""
+        user_node = self.vfs.resolve_path("home/user")
+        calculated_size = self.vfs.calculate_node_size(user_node)
+        self.assertEqual(calculated_size, 15)
 
 
 if __name__ == "__main__":

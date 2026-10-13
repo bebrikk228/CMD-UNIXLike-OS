@@ -1,0 +1,5 @@
+path,type,content,size
+/,dir,,
+/home,dir,,
+/home/readme.txt,file,SGVsbG8h,15
+/etc,dir,,

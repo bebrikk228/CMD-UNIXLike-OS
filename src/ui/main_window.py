@@ -66,6 +66,7 @@ QLabel#TitleText {
     font-family: "MS Sans Serif", monospace; font-size: 12px;
 }
 
+/* ЕДИНЫЙ СТАНДАРТ РЕТРО-КНОПОК (Окно, Скроллбар, Стрелочка) */
 QPushButton#WinBtn, QPushButton#ScrollHandle, QPushButton#RunBtn {
     background-color: #c0c0c0; color: #000000 !important; font-weight: bold;
     font-family: "MS Sans Serif", monospace; font-size: 11px;
@@ -77,6 +78,7 @@ QPushButton#WinBtn:pressed, QPushButton#ScrollHandle:pressed, QPushButton#RunBtn
     border-right: 1.5px solid #fff; border-bottom: 1.5px solid #fff;
 }
 
+/* Текстовые поля и инпуты (Единый вдавленный 3D рельеф) */
 QTextEdit, QLineEdit, QLabel#PromptLabel {
     border-left: 2px solid #808080; border-top: 2px solid #808080;
     border-right: 2px solid #fff; border-bottom: 2px solid #fff;
@@ -88,6 +90,7 @@ QLabel#PromptLabel {
     font-size: 12px; padding-left: 4px; padding-right: 4px; background-color: #c0c0c0;
 }
 
+/* Трек бесшовно прилегает к QTextEdit без внутренних щелей */
 QWidget#ScrollTrack {
     background-color: #dfdfdf;
     border-top: 2px solid #808080;
@@ -333,11 +336,9 @@ class TerminalWindow(QMainWindow):
         layout.addLayout(input_container)
 
     def _get_formatted_pwd(self) -> str:
-        """Форматирование пути для Этапа 2 (безопасно без VFS)."""
-        if hasattr(self.interpreter, "vfs") and self.interpreter.vfs:
-            pwd = self.interpreter.vfs.get_pwd()
-            return pwd.replace("/home", "~", 1) if pwd.startswith("/home") else pwd
-        return "~"
+        """Форматирование пути текущей директории."""
+        pwd = self.interpreter.vfs.get_pwd()
+        return pwd.replace("/home", "~", 1) if pwd.startswith("/home") else pwd
 
     def update_prompt_label(self):
         """Обновление текста приглашения."""
